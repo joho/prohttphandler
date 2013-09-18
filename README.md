@@ -12,19 +12,20 @@ An example that serves all files in "public" at / and serves up a super boring h
 package main
 
 import (
- 	"fmt"
-	"github.com/joho/prohttphandler"
+  "fmt"
+  "github.com/joho/prohttphandler"
+  "log"
   "net/http"
 )
 
 func main() {
-	handler := prohttphandler.New("public")
+  handler := prohttphandler.New("public")
 
-	handler.ExactMatchFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	  fmt.Fprintf(w, "This is the homepage at /")
-	})
+  handler.ExactMatchFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "This is the homepage at /")
+  })
 
-	log.Fatal(http.ListenAndServe(":8080", handler))
+  log.Fatal(http.ListenAndServe(":8080", handler))
 }
 ```
 
