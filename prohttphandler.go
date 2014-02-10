@@ -35,15 +35,20 @@ func (w gzipResponseWriter) Write(b []byte) (int, error) {
 // Keep an eye out for weird Content-Type issues if you're gzipping, as this will try and auto-guess
 // the content type and may not be 100% accurate.
 func (h *ProHttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-		h.handleRequest(w, r)
-		return
+	httpFunc := h.handleRequest
+
+	if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+		innerHttpFunc := httpFunc
+		httpFunc = func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Encoding", "gzip")
+			gz := gzip.NewWriter(w)
+			defer gz.Close()
+			gzr := gzipResponseWriter{Writer: gz, ResponseWriter: w}
+			innerHttpFunc(gzr, r)
+		}
 	}
-	w.Header().Set("Content-Encoding", "gzip")
-	gz := gzip.NewWriter(w)
-	defer gz.Close()
-	gzr := gzipResponseWriter{Writer: gz, ResponseWriter: w}
-	h.handleRequest(gzr, r)
+
+	httpFunc(w, r)
 }
 
 // Registers a http handler func for the path you specify
