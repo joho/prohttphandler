@@ -32,4 +32,4 @@ func main() {
 There are some very poor [docs here](http://godoc.org/github.com/joho/prohttphandler)
 
 ---
-Copyright 2013 [John Barton](http://whoisjohnbarton.com) (but under MIT Licence)
+Copyright 2013 [John Barton](https://johnbarton.co/) (but under MIT Licence)
